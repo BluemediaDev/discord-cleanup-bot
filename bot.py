@@ -50,7 +50,8 @@ class BotClient(discord.Client):
                 before = now - timedelta(hours=persisted_channel.retention_hours)
                 after = now - timedelta(days=14)
                 messages = [message async for message in channel.history(before=before, after=after)]
-                message_chunks = divide_chunks(messages, 100)
+                filtered_messages = filter(lambda message: message.pinned == False, messages)
+                message_chunks = divide_chunks(filtered_messages, 100)
                 for chunk in message_chunks:
                     await channel.delete_messages(chunk, reason='Configured retention period expired.')
                 persisted_channel.last_pruned=now
