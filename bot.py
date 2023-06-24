@@ -80,6 +80,15 @@ async def on_guild_remove(guild):
         session.delete(removed_guild)
         session.commit()
 
+@client.event
+async def on_guild_channel_delete(channel):
+    with Session(sqla_engine) as session:
+        removed_channel = session.get(Channel, channel.id)
+        if removed_channel == None:
+            return
+        session.delete(removed_channel)
+        session.commit()
+
 @client.tree.command()
 @app_commands.guild_only()
 @app_commands.describe(
