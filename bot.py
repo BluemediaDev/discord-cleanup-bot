@@ -30,6 +30,13 @@ def divide_chunks(l, n):
     for i in range(0, len(l), n): 
         yield l[i:i + n]
 
+async def purge_messages(channel, audit_message: str, before: datetime, after: datetime):
+    messages = [message async for message in channel.history(before=before, after=after)]
+    filtered_messages = [m for m in messages if m.pinned == False]
+    message_chunks = divide_chunks(filtered_messages, 100)
+    for chunk in message_chunks:
+        await channel.delete_messages(chunk, reason=audit_message)
+
 class BotClient(discord.Client):
     def __init__(self, *, intents: discord.Intents):
         super().__init__(intents=intents)
@@ -49,11 +56,7 @@ class BotClient(discord.Client):
                 now = datetime.now()
                 before = now - timedelta(hours=persisted_channel.retention_hours)
                 after = now - timedelta(days=14)
-                messages = [message async for message in channel.history(before=before, after=after)]
-                filtered_messages = [m for m in messages if m.pinned == False]
-                message_chunks = divide_chunks(filtered_messages, 100)
-                for chunk in message_chunks:
-                    await channel.delete_messages(chunk, reason='Configured retention period expired.')
+                await purge_messages(channel=channel, audit_message='Configured retention period expired.', before=before, after=after)
                 persisted_channel.last_pruned=now
             session.commit()
 
@@ -133,5 +136,19 @@ async def retention(interaction: discord.Interaction, action: Choice[int], reten
                     session.delete(channel)
                 session.commit()
             await interaction.response.send_message(content='✅ Messages in this channel will no loger be automatically deleted.', delete_after=20)
+
+@client.tree.command()
+@app_commands.guild_only()
+@app_commands.describe(
+    days='Delete messages of the last x days'
+)
+async def purge(interaction: discord.Interaction, days: int):
+    """Clear messages of the last x days in the current channel."""
+    if days > 13:
+        await interaction.response.send_message(content='❌ Error: Due to technical limitations, 13 days is the maximum after which I can still delete messages. Please use `13` days or less.', delete_after=20)
+        return
+    await purge_messages(channel=interaction.channel, audit_message=f'Deleted via /purge command from user {interaction.user.name}', before=datetime.now(), after=(datetime.now() - timedelta(days=days)))
+    await interaction.response.send_message(content='✅ Messages deleted.', delete_after=20)
+
 
 client.run(token=os.getenv("BOT_TOKEN"), log_handler=None)
