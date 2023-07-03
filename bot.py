@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from models import Guild, Channel, Base
 
 import discord
-from discord import app_commands, CustomActivity
+from discord import app_commands, Game
 from discord.app_commands import Choice
 from discord.ext import tasks
 
@@ -151,6 +151,6 @@ async def purge(interaction: discord.Interaction, days: int):
     await interaction.response.send_message(content='✅ Messages deleted.', delete_after=20)
 
 
-client.activity = CustomActivity(name="Cleaning up your sh*t")
+client.activity = Game(name="with the broomstick")
 
 client.run(token=os.getenv("BOT_TOKEN"), log_handler=None)
