@@ -147,7 +147,7 @@ async def purge(interaction: discord.Interaction, days: int):
     if days > 13:
         await interaction.response.send_message(content='❌ Error: Due to technical limitations, 13 days is the maximum after which I can still delete messages. Please use `13` days or less.', delete_after=20)
         return
-    await purge_messages(channel=interaction.channel, audit_message=f'Deleted via /purge command from user {interaction.user.name}', before=datetime.now(), after=(datetime.now() - timedelta(days=days)))
+    await purge_messages(channel=interaction.channel, audit_message=f'Deleted via /purge command from user {interaction.user.name}', before=interaction.created_at, after=(datetime.now() - timedelta(days=days)))
     await interaction.response.send_message(content='✅ Messages deleted.', delete_after=20)
 
 
