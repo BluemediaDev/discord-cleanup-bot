@@ -21,5 +21,8 @@ steps:
         from_secret: smtp_notify_email
       password:
         from_secret: smtp_notify_password
+      recipients_only: true
+      recipients:
+        from_secret: smtp_notify_recipients
     when:
       - status: [ failure ]
