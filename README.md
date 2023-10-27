@@ -20,7 +20,7 @@ If you don't want to use Docker, you can set up the bot manually:
 2. Create and activate a new venv
 3. Install the requirements using `requirements.txt`
 4. Create a bot account [using this guide](https://discordpy.readthedocs.io/en/stable/discord.html#creating-a-bot-account) (ignore the "Inviting Your Bot" section - the bot will show you the correct invite link later)
-5. Set your bot token in the environment variable `BOT_TOKEN`
+5. Set your bot token in the environment variable `BOT_TOKEN` and specify a file path for the SQLite database using `DB_PATH`
 6. Start the `bot.py` script
 7. Copy the invite link to your browser
 
