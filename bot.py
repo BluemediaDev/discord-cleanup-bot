@@ -7,9 +7,10 @@ from sqlalchemy.orm import Session
 from models import Guild, Channel, Base
 
 import discord
-from discord import app_commands, Game
+from discord import app_commands, Game, Permissions
 from discord.app_commands import Choice
 from discord.ext import tasks
+from discord.utils import oauth_url
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -45,6 +46,8 @@ class BotClient(discord.Client):
     async def setup_hook(self):
         await self.tree.sync()
         self.background_task.start()
+        invite_url = oauth_url(client_id=self.application_id, permissions=Permissions(permissions=76800))
+        logger.info(f"Bot started. Invite it using the following link: {invite_url}")
 
     @tasks.loop(minutes=15)
     async def background_task(self):
