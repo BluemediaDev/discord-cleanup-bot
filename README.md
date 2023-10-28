@@ -1,5 +1,5 @@
 # discord-cleanup-bot
-A simple discord bot to clean up messages in a channel after a configured ammount of time.
+A simple discord bot to clean up messages in a channel after a configured amount of time.
 
 ## Limitations / special features
 - Only messages not older than 14 days can be deleted
