@@ -13,17 +13,15 @@ steps:
       tag: latest
 
   notify:
-    image: git.bluemedia.dev/bluemedia/woodpecker-email
+    image: deblan/woodpecker-email
     settings:
+      dsn:
+        from_secret: smtp_notify_dsn
       from:
-        from_secret: smtp_notify_email
-      host:
-        from_secret: smtp_notify_host
-      username:
-        from_secret: smtp_notify_username
-      password:
-        from_secret: smtp_notify_password
-      recipients_only: true
+        address:
+          from_secret: smtp_notify_from_address
+        name:
+          from_secret: smtp_notify_from_name
       recipients:
         from_secret: smtp_notify_recipients
     when:
